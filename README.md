@@ -31,7 +31,7 @@ jQuery 1.6+
 #Run tests
 
 * In your browser: go to `tests/index.html`
-* Headless tests: install mocha-phantomjs with npm: `npm install -g mocha-phantomjs` and then run `./bin/test-suite.sh`
+* Headless tests: install mocha-phantomjs with npm: `npm install -g phantomjs mocha-phantomjs` and then run `./bin/test-suite.sh`
 
 #Make production minified versions
 

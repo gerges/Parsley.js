@@ -1359,5 +1359,53 @@
     } );
   } );
 
+
+  function LiveParsleyField ( element ) {
+    this.$el = $( element );
+  }
+
+  LiveParsleyField.prototype = {
+    validate: function (name) {
+      console.log( "validate" + name);
+    },
+
+    triggers: function () {
+      return this.$el.attr( "data-trigger" ).split(/\s+/);
+    }
+  };
+
+  var getters = [
+    // standard HTML inputs
+    function ( element ) {
+      if ( $( element ).is( "input, select, textarea" ) ) {
+        return element;
+      }
+    }
+  ];
+
+  function getField (element) {
+    var result;
+
+    $.each(getters, function (index, getter) {
+      result || ( result = getter(element) );
+    });
+
+    return result;
+  }
+
+  $( document).on( 'focus blur change keydown keypress keyup', function ( e ) {
+    var field;
+
+    field = getField(e.target);
+
+    if ( field ) {
+      field = new LiveParsleyField( field );
+
+      if ( $.inArray( e.type, field.triggers() ) !== -1) {
+        field.validate(e.type);
+      }
+    }
+  } );
+
 // This plugin works with jQuery or Zepto (with data extension built for Zepto.)
 }(window.jQuery || window.Zepto);
