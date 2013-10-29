@@ -48,14 +48,172 @@
       , maxcheck:       "You must select %s choices or less."
       , rangecheck:     "You must select between %s and %s choices."
       , equalto:        "This value should be the same."
-    },
+    };
 
-    this.init( options );
+    this.init( options || {} );
   };
 
   Validator.prototype = {
 
     constructor: Validator
+
+    , fields: {
+      html: function ( element ) {
+        if ( $( element ).is( "input, select, textarea" ) ) {
+          return element;
+        }
+      }
+    }
+
+    , plugins: {
+
+      /**
+       * Abandons validation unless triggered by an appropriate event.
+       *
+       * @param {LiveParsleyField} field
+       */
+      'triggers': function ( field ) {
+        return {
+          beforeValidate: function ( options ) {
+            if ( options.event ) {
+              if ( $.inArray( options.event.type, field.triggers() ) === -1 ) {
+                return false;
+              }
+            }
+          }
+        };
+      }
+
+      /**
+       * Delays rapid validation until after the field has been validated once.
+       *
+       * @param {LiveParsleyField} field
+       * @returns {{beforeValidate: Function, afterValidate: Function}}
+       */
+      , 'delayed-validation': function ( field ) {
+        return {
+          beforeValidate: function ( options ) {
+            if ( options.event ) {
+              var trigger = options.event.type,
+                  triggers = field.triggers(),
+                  forced = $.inArray( trigger, triggers ) !== -1,
+                  delayableKey = $.inArray( trigger, [ 'keyup', 'change' ] ) !== -1,
+                  shouldDelay = !field.getOption( 'validated-once' );
+
+              if (!forced && delayableKey && shouldDelay) {
+                return false;
+              }
+            }
+          },
+
+          afterValidate: function () {
+            field.setOption( 'validated-once', true );
+          }
+        };
+      }
+
+      , 'validation-min-length': function ( field ) {
+        var hooks = {},
+            minLength = field.getOption( 'validation-min-length' ),
+            validatedOnce = field.getOption( 'validated-once' );
+
+        if (minLength === undefined) {
+          minLength = $.fn.parsley.defaults.validationMinlength;
+        }
+
+        if ( minLength && !validatedOnce ) {
+          hooks.beforeValidate = function () {
+            var value = field.value()
+            if ( value && value.length < minLength ) {
+              return false;
+            }
+          };
+        }
+
+        return hooks;
+      }
+
+      /**
+       * Delays validation until after another field has been validated.
+       *
+       * @param field
+       * @returns {{beforeValidate: Function}}
+       */
+      , 'validate-after': function ( field ) {
+        var hooks = {},
+            selector = field.getOption( 'validate-after' );
+
+        if ( selector ) {
+          hooks.beforeValidate = function () {
+            var other = new LiveParsleyField( selector );
+
+            if ( !other.getOption( 'validated-once' ) ) {
+              return false;
+            }
+          }
+        }
+
+        return hooks;
+      }
+    }
+
+    , constraints: {
+      required: function ( field ) {
+        if ( field.$el.hasClass( 'required' ) || field.$el.prop( 'required' ) ) {
+          return function ( value ) {
+            return Validator.prototype.validators.notnull( value )
+                && Validator.prototype.validators.notblank( value );
+          }
+        }
+      }
+
+      , regexp: function (field) {
+        var pattern,
+            flags;
+
+        pattern = field.$el.attr( 'pattern' ) || field.getOption( 'regexp' );
+        flags = field.getOption( 'regexp-flags' ) || '';  // TODO: document this
+
+        if ( pattern ) {
+          return function ( value ) {
+            return new RegExp( pattern, flags ).test( value );
+          }
+        }
+      }
+
+      , min: function ( field ) {
+        var type = field.$el.attr( 'type' ),
+            min = field.$el.attr( 'min' );
+
+        if ( min !== void 0 && $.inArray( type, [ 'number', 'range' ] ) !== -1 ) {
+          return function ( value ) {
+            return (new Validator()).validators.min( value, min );
+          }
+        }
+      }
+
+      , max: function ( field ) {
+        var type = field.$el.attr( 'type' ),
+            max = field.$el.attr( 'max' );
+
+        if ( max !== void 0 && $.inArray(type, [ 'number', 'range' ]) !== -1 ) {
+          return function ( value ) {
+            return (new Validator()).validators.min( value, max );
+          }
+        }
+      }
+
+      , type: function ( field ) {
+        var type = field.type(),
+            supported = ['number', 'digits', 'alphanum', 'email', 'url', 'urlstrict', 'dateIso', 'phone'];
+
+        if ( $.inArray( type, supported ) !== -1 ) {
+          return function ( value ) {
+            return (new Validator()).validators.type( value, type );
+          }
+        }
+      }
+    }
 
     /**
     * Validator list. Built-in validators functions
@@ -1359,51 +1517,403 @@
     } );
   } );
 
+  // -- REWRITE STARTS HERE
+
+  function coerce ( value ) {
+    var dummy = $( "<div/>" );
+    dummy.data( "x", value );
+    return dummy.data( "x" );
+  }
 
   function LiveParsleyField ( element ) {
     this.$el = $( element );
   }
 
   LiveParsleyField.prototype = {
-    validate: function (name) {
-      console.log( "validate" + name);
-    },
 
-    triggers: function () {
-      return this.$el.attr( "data-trigger" ).split(/\s+/);
+    validators: function () {
+      var field = this,
+          sorted = {},
+          order = ( this.getOption( 'validators' ) || '' ).split( /\s+/ ),
+          validators = {};
+
+      $.each( Validator.prototype.constraints, function ( name, detector ) {
+        var validator = detector( field );
+
+        if ( validator ) {
+          validators[ name ] = validator;
+        }
+      });
+
+      if ( order.length === 0 ) {
+        sorted = validators;
+      } else {
+        $.each( order, function ( index, name ) {
+          if ( validators.hasOwnProperty( name ) ) {
+            sorted[ name ] = validators[ name ];
+          }
+        } );
+      }
+
+      return sorted;
+    }
+
+    , getOption: function ( name ) {
+      var value = this.$el.attr( "data-" + name );
+      if ( value !== void 0 ) {
+        return coerce( value );
+      }
+      return $.fn.parsley.defaults[ name ];
+    }
+
+    , setOption: function (name, value) {
+      this.$el.attr("data-" + name, value);
+    }
+
+    /**
+     * Return the 'type' of the field.
+     *
+     * @returns {string}
+     */
+    , type: function () {
+      var type = this.$el.attr( 'type'),
+          override = this.getOption( 'type' );
+
+      if ( override ) {
+        type = override;
+      }
+
+      return type;
+    }
+
+    /**
+     * Returns a list of events that should trigger validation.
+     *
+     * @returns {string[]}
+     */
+    , triggers: function () {
+      var triggers = $.trim(this.getOption( 'trigger' ) || '');
+
+      if ( triggers.length ) {
+        triggers = triggers.split( /\s+/ );
+      } else {
+        triggers = [];
+      }
+
+      // alaways bind keyup event, for better UX when a field is invalid
+      if ( $.inArray( 'keypress', triggers ) === -1 &&
+           $.inArray( 'keydown', triggers ) === -1 &&
+           $.inArray( 'keyup', triggers ) === -1 ) {
+        triggers.push( 'keyup' );
+      }
+
+      // alaways bind change event, for better UX when a select is invalid
+      if ( this.$el.is( 'select' ) && $.inArray( 'change', triggers ) === -1 ) {
+        triggers.push( 'change' );
+      }
+
+      return triggers;
+    }
+
+    , plugins: function () {
+      var field = this,
+          plugins = {};
+
+      $.each( Validator.prototype.plugins, function ( name, plugin ) {
+        plugins[ name ] = plugin( field );
+      } );
+
+      return plugins;
+    }
+
+    , value: function () {
+      var value = this.getOption( "value" );
+
+      if ( value !== undefined ) {
+        value = eval("(function () { " + value + " }).call(window)");
+      } else {
+        value = this.$el.val();
+      }
+
+      return value;
+    }
+
+    , errorClassHandler: function () {
+      return this.getOption( 'error-class-handler' ) || this.$el.parent();
+    }
+
+    /**
+     * Validate the field.
+     *
+     * @param {DOMEvent} [event] The DOM event that triggered the validation.
+     * @returns {boolean} true if the field is valid, false if it's invalid, undefined if no validation
+     */
+    , validate: function ( event ) {
+      var results = {},
+          plugins = this.plugins(),
+          validators = this.validators(),
+          value = this.value(),
+          valid = true,
+          validate = true;
+
+      // Run plugin beforeValidate hooks, allowing validation to be aborted
+      $.each( plugins, function ( name, plugin ) {
+        var proceed;
+
+        if ( plugin.beforeValidate ) {
+          proceed = plugin.beforeValidate( {
+            event: event
+          } );
+
+          if ( proceed === false ) {
+            console.log( 'aborting ' + event.type + ' validation due to ' + name );
+            validate = false;
+          }
+        }
+      } );
+
+      // If no plugin has tried to abort, proceed with validation
+      if ( validate ) {
+        $.each( validators, function ( name, validator ) {
+          results[ name ] = validator( value );
+        } );
+
+        // Run plugin afterValidate hooks
+        $.each( plugins, function ( name, plugin ) {
+          plugin.afterValidate && plugin.afterValidate( {
+            results: results
+          } );
+        } );
+
+//        if ( 'undefined' !== typeof errorBubbling ? errorBubbling : this.options.showErrors ) {
+        this.manageValidationResult( results );
+//        }
+
+        return valid;
+      }
+    }
+
+    /**
+     * Fired when all validators have be executed
+     * Returns true or false if field is valid or not
+     * Display errors messages below failed fields
+     * Adds parsley-success or parsley-error class on fields
+     *
+     * @method manageValidationResult
+     * @return {Boolean} Is field valid or not
+     */
+    , manageValidationResult: function ( results ) {
+      var allValid = null,
+          errorClass = this.getOption( 'error-class' ),
+          field = this,
+          successClass = this.getOption( 'success-class' );
+
+
+      $.each( results, function ( name, valid ) {
+        if ( false === valid ) {
+          field.manageError( name );
+          allValid = false;
+        } else if ( true === valid ){
+          field.removeError( name );
+          if ( allValid === null ) {
+            allValid = true;
+          }
+        }
+      } );
+
+      if ( true === allValid ) {
+        this.removeErrors();
+        this.errorClassHandler().removeClass( errorClass ).addClass( successClass );
+        return true;
+      } else if ( false === allValid ) {
+        this.errorClassHandler().removeClass( successClass ).addClass( errorClass );
+        return false;
+      }
+
+      // remove li error, and ul error if no more li inside
+      if ( this.ulError && $( this.ulError ).children().length === 0 ) {
+        this.removeErrors();
+      }
+
+      return allValid;
+    }
+
+    , ulError: function () {
+      var selector = '#' + this.hash();
+
+    }
+
+    , hash: function () {
+      var hash = this.getOption( 'hash' );
+      if ( undefined === hash ) {
+        hash = this.generateHash();
+        this.setOption( 'hash', hash );
+      }
+      return hash;
+    }
+
+    , generateHash: function () {
+      return 'parsley-' + ( Math.random() + '' ).substring( 2 );
+    }
+
+    , errorsWrapper: function () {
+      return '<ul></ul>';
+    }
+
+    , errorElem: function () {
+      return '<li></li>';
+    }
+
+    /**
+     * Manage ul error Container
+     *
+     * @private
+     * @method ulErrorManagement
+     */
+    , ulErrorManagement: function () {
+      this.ulTemplate = $( this.errorsWrapper() ).attr( 'id', this.hash ).addClass( 'parsley-error-list' );
+    }
+
+    /**
+     * Remove li / ul error
+     *
+     * @method removeError
+     * @param {String} constraintName Method Name
+     */
+    , removeError: function ( constraintName ) {
+      var liError = this.ulError + ' .' + constraintName
+          , that = this;
+
+      this.options.animate ? $( liError ).fadeOut( this.options.animateDuration, function () {
+        $( this ).remove();
+
+        if ( that.ulError && $( that.ulError ).children().length === 0 ) {
+          that.removeErrors();
+        } } ) : $( liError ).remove();
+    }
+
+    /**
+     * Add li error
+     *
+     * @method addError
+     * @param {Object} { minlength: "error message for minlength constraint" }
+     */
+    , addError: function ( error ) {
+      for ( var constraint in error ) {
+        var liTemplate = $( this.options.errors.errorElem ).addClass( constraint );
+
+        $( this.ulError ).append( this.options.animate ? $( liTemplate ).html( error[ constraint ] ).hide().fadeIn( this.options.animateDuration ) : $( liTemplate ).html( error[ constraint ] ) );
+      }
+    }
+
+    /**
+     * Remove all ul / li errors
+     *
+     * @method removeErrors
+     */
+    , removeErrors: function () {
+      this.options.animate ? $( this.ulError ).fadeOut( this.options.animateDuration, function () { $( this ).remove(); } ) : $( this.ulError ).remove();
+    }
+
+    /**
+     * Remove ul errors and parsley error or success classes
+     *
+     * @method reset
+     */
+    , reset: function () {
+      this.valid = null;
+      this.removeErrors();
+      this.validatedOnce = false;
+      this.errorClassHandler.removeClass( this.options.successClass ).removeClass( this.options.errorClass );
+
+      for ( var constraint in this.constraints ) {
+        this.constraints[ constraint ].valid = null;
+      }
+
+      return this;
+    }
+
+    /**
+     * Add li / ul errors messages
+     *
+     * @method manageError
+     * @param {Object} constraint
+     */
+    , manageError: function ( constraint ) {
+      // display ulError container if it has been removed previously (or never shown)
+      if ( !$( this.ulError ).length ) {
+        this.manageErrorContainer();
+      }
+
+      // TODO: refacto properly
+      // if required constraint but field is not null, do not display
+      if ( 'required' === constraint.name && null !== this.getVal() && this.getVal().length > 0 ) {
+        return;
+        // if empty required field and non required constraint fails, do not display
+      } else if ( this.isRequired && 'required' !== constraint.name && ( null === this.getVal() || 0 === this.getVal().length ) ) {
+        this.removeError(constraint.name);
+        return;
+      }
+
+      // TODO: refacto error name w/ proper & readable function
+      var constraintName = constraint.name
+          , liClass = false !== this.options.errorMessage ? 'custom-error-message' : constraintName
+          , liError = {}
+          , message = false !== this.options.errorMessage ? this.options.errorMessage : ( constraint.name === 'type' ?
+              this.Validator.messages[ constraintName ][ constraint.requirements ] : ( 'undefined' === typeof this.Validator.messages[ constraintName ] ?
+              this.Validator.messages.defaultMessage : this.Validator.formatMesssage( this.Validator.messages[ constraintName ], constraint.requirements ) ) );
+
+      // add liError if not shown. Do not add more than once custom errorMessage if exist
+      if ( !$( this.ulError + ' .' + liClass ).length ) {
+        liError[ liClass ] = message;
+        this.addError( liError );
+      }
+    }
+
+    /**
+     * Create ul error container
+     *
+     * @method manageErrorContainer
+     */
+    , manageErrorContainer: function () {
+      var errorContainer = this.options.errorContainer || this.options.errors.container( this.element, this.isRadioOrCheckbox )
+          , ulTemplate = this.options.animate ? this.ulTemplate.show() : this.ulTemplate;
+
+      if ( 'undefined' !== typeof errorContainer ) {
+        $( errorContainer ).append( ulTemplate );
+        return;
+      }
+
+      !this.isRadioOrCheckbox ? this.$element.after( ulTemplate ) : this.$element.parent().after( ulTemplate );
     }
   };
 
-  var getters = [
-    // standard HTML inputs
-    function ( element ) {
-      if ( $( element ).is( "input, select, textarea" ) ) {
-        return element;
-      }
-    }
-  ];
-
-  function getField (element) {
-    var result;
-
-    $.each(getters, function (index, getter) {
-      result || ( result = getter(element) );
-    });
-
-    return result;
-  }
-
-  $( document).on( 'focus blur change keydown keypress keyup', function ( e ) {
+  function findField ( element ) {
     var field;
 
-    field = getField(e.target);
+    $.each( Validator.prototype.fields, function ( name, finder ) {
+      field = finder( element );
+      if ( field ) {
+        field = new LiveParsleyField ( field );
+        return false;
+      }
+    });
+
+    return field;
+  }
+
+  $( document ).on( 'focus blur change keydown keypress keyup input', function ( e ) {
+    var field,
+        isValid;
+
+    field = findField ( e.target );
 
     if ( field ) {
-      field = new LiveParsleyField( field );
+      isValid = field.validate ( e );
+    }
 
-      if ( $.inArray( e.type, field.triggers() ) !== -1) {
-        field.validate(e.type);
-      }
+    if ( isValid !== undefined ) {
+      console.log( "isValid = " +  isValid );
     }
   } );
 
