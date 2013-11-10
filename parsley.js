@@ -1686,7 +1686,7 @@
         } );
 
 //        if ( 'undefined' !== typeof errorBubbling ? errorBubbling : this.options.showErrors ) {
-        this.manageValidationResult( results );
+//        this.manageValidationResult( results );
 //        }
 
         return valid;
@@ -1738,9 +1738,21 @@
       return allValid;
     }
 
-    , ulError: function () {
-      var selector = '#' + this.hash();
+    , errorsContainer: function () {
+      var container,
+          selector = '#' + this.hash();
 
+      container = $( selector );
+
+      if ( container.length === 0 ) {
+        container = $( '<ul></ul>' ).attr( {
+          'id': this.hash(),
+          'class': 'parsley-error-list'
+        } );
+        container.insertAfter( this.$el );
+      }
+
+      return container;
     }
 
     , hash: function () {
@@ -1756,24 +1768,6 @@
       return 'parsley-' + ( Math.random() + '' ).substring( 2 );
     }
 
-    , errorsWrapper: function () {
-      return '<ul></ul>';
-    }
-
-    , errorElem: function () {
-      return '<li></li>';
-    }
-
-    /**
-     * Manage ul error Container
-     *
-     * @private
-     * @method ulErrorManagement
-     */
-    , ulErrorManagement: function () {
-      this.ulTemplate = $( this.errorsWrapper() ).attr( 'id', this.hash ).addClass( 'parsley-error-list' );
-    }
-
     /**
      * Remove li / ul error
      *
@@ -1781,15 +1775,25 @@
      * @param {String} constraintName Method Name
      */
     , removeError: function ( constraintName ) {
-      var liError = this.ulError + ' .' + constraintName
-          , that = this;
+      var li = this.errorsContainer().find( '.' + constraintName);
 
-      this.options.animate ? $( liError ).fadeOut( this.options.animateDuration, function () {
-        $( this ).remove();
+      function tidy () {
+        var parent = li.parent();
 
-        if ( that.ulError && $( that.ulError ).children().length === 0 ) {
-          that.removeErrors();
-        } } ) : $( liError ).remove();
+        li.remove();
+
+        if ( parent.length === 0 ) {
+          parent.remove();
+        }
+      }
+
+      if ( li.length ) {
+        if ( this.getOption( 'animate' ) ) {
+          li.fadeOut( this.getOption( 'animate-duration' ), tidy );
+        } else {
+          tidy();
+        }
+      }
     }
 
     /**
@@ -1799,10 +1803,18 @@
      * @param {Object} { minlength: "error message for minlength constraint" }
      */
     , addError: function ( error ) {
-      for ( var constraint in error ) {
-        var liTemplate = $( this.options.errors.errorElem ).addClass( constraint );
+      var li;
 
-        $( this.ulError ).append( this.options.animate ? $( liTemplate ).html( error[ constraint ] ).hide().fadeIn( this.options.animateDuration ) : $( liTemplate ).html( error[ constraint ] ) );
+      for ( var constraint in error ) {
+        li = $( '<li></li>' )
+            .html( error[ constraint ] )
+            .addClass( constraint );
+
+        if ( this.getOption( 'animate') ) {
+          li.hide().fadeIn( this.getOption( 'animate-duration') )
+        }
+
+        this.errorsContainer().append( li );
       }
     }
 
@@ -1812,7 +1824,7 @@
      * @method removeErrors
      */
     , removeErrors: function () {
-      this.options.animate ? $( this.ulError ).fadeOut( this.options.animateDuration, function () { $( this ).remove(); } ) : $( this.ulError ).remove();
+      this.getOption( 'animate') ? this.errorsContainer().fadeOut( this.getOption( 'animate-duration' ), function () { $( this ).remove(); } ) : this.errorsContainer().remove();
     }
 
     /**
@@ -1820,18 +1832,18 @@
      *
      * @method reset
      */
-    , reset: function () {
-      this.valid = null;
-      this.removeErrors();
-      this.validatedOnce = false;
-      this.errorClassHandler.removeClass( this.options.successClass ).removeClass( this.options.errorClass );
-
-      for ( var constraint in this.constraints ) {
-        this.constraints[ constraint ].valid = null;
-      }
-
-      return this;
-    }
+//    , reset: function () {
+//      this.valid = null;
+//      this.removeErrors();
+//      this.validatedOnce = false;
+//      this.errorClassHandler.removeClass( this.options.successClass ).removeClass( this.options.errorClass );
+//
+//      for ( var constraint in this.constraints ) {
+//        this.constraints[ constraint ].valid = null;
+//      }
+//
+//      return this;
+//    }
 
     /**
      * Add li / ul errors messages
