@@ -6,7 +6,20 @@
   </head>
   <body>
     <form data-validate="parsley">
-      <input type="text" name="email" data-type="email" data-validators="required type"/>
+      <div>
+        <label for="email-input">Email:</label>
+        <input type="text" id="email-input" data-type="email" data-validators="required type"/>
+      </div>
+
+      <div>
+        <label for="number-input">Number:</label>
+        <input type="number" id="number-input" data-validators=''/>
+      </div>
+
+      <div>
+        <label for="website-input">Website:</label>
+        <input type="text" id="website-input" data-trigger="change" data-type="url" />
+      </div>
     </form>
   </body>
 </html>
