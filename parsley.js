@@ -696,13 +696,12 @@
   }
 
   $( document ).on( 'focus blur change keydown keypress keyup input', function ( e ) {
-    var field,
-        isValid;
+    var field;
 
     field = findField ( e.target );
 
     if ( field ) {
-      isValid = field.validate ( e );
+      field.validate ( e );
     }
   } );
 
