@@ -56,7 +56,7 @@
         var $el = $( element );
 
         if ( $el.is( "input, select, textarea" )
-            && $el.not( "[type=checkbox], [type=radio]" ).length ) {
+            && $el.not( "[type=checkbox], [type=radio], [type=hidden]" ).length ) {
           return new Field( element );
         }
       }
