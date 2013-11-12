@@ -507,14 +507,16 @@ var testSuite = function () {
 //        triggerSubmitValidation( '#customvalidator', '18' );
 //        expect( $( '#customvalidator' ).hasClass( 'parsley-success' ) ).to.be( true );
 //      } )
-//      describe ( 'Test radio / checkboxes specific validators', function () {
-//        it ( 'mincheck', function () {
-//          $( '#checkbox-mincheck1' ).attr( 'checked', 'checked' );
-//          expect( $( '#checkbox-mincheck1' ).parsley( 'validate' ) ).to.be( false );
+      describe ( 'Test radio / checkboxes specific validators', function () {
+        it ( 'mincheck', function () {
+          $( '#checkbox-mincheck1' ).attr( 'checked', 'checked' );
+          $( '#checkbox-mincheck1' ).trigger( 'validate' );
+          expect( $( '#checkbox-mincheck1' ).parent().hasClass( 'parsley-error' ) ).to.be( true );
 //          expect( getErrorMessage( '#checkbox-mincheck1', 'mincheck') ).to.be( 'You must select at least 2 choices.' );
-//          $( '#checkbox-mincheck2' ).attr( 'checked', 'checked' );
-//          expect( $( '#checkbox-mincheck1' ).parsley( 'validate' ) ).to.be( true );
-//        } )
+          $( '#checkbox-mincheck2' ).attr( 'checked', 'checked' );
+          $( '#checkbox-mincheck2' ).trigger( 'validate' );
+          expect( $( '#checkbox-mincheck2' ).parent().hasClass( 'parsley-error' ) ).to.be( false );
+        } )
 //        it ( 'mincheck data-group', function () {
 //          $( '#checkbox-mincheckgroup1' ).attr( 'checked', 'checked' );
 //          expect( $( '#checkbox-mincheckgroup1' ).parsley( 'validate' ) ).to.be( false );
@@ -632,7 +634,7 @@ var testSuite = function () {
 //          } );
 //        } )
 //
-//      } )
+      } );
     } )
 
     /***************************************

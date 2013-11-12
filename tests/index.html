@@ -106,8 +106,10 @@
             <input type="text" id="equalTo-model" value="foobar" />
             <input type="text" id="equalTo" data-equalTo="#equalTo-model" />
 
-            <input type="checkbox" id="checkbox-mincheck1" name="mincheck[]" value="foo" data-mincheck="2" />
-            <input type="checkbox" id="checkbox-mincheck2" name="mincheck[]" value="bar" />
+            <div data-valid-container data-mincheck="2">
+                <input type="checkbox" id="checkbox-mincheck1" name="mincheck[]" value="foo" />
+                <input type="checkbox" id="checkbox-mincheck2" name="mincheck[]" value="bar" />
+            </div>
 
             <input type="checkbox" id="checkbox-mincheckgroup1" value="foo" data-group="foo" data-mincheck="2" />
             <input type="checkbox" id="checkbox-mincheckgroup2" value="bar" data-group="foo" />

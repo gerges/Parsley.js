@@ -68,7 +68,7 @@
         if ( $el.is( "input[type=radio]" ) ) {
           container = $( element ).closest( "[data-valid-container]" );
           if ( container.length ) {
-            return new RadioField( element );
+            return new RadioField( container );
           }
         }
       }
@@ -80,7 +80,7 @@
         if ( $el.is( "input[type=checkbox]" ) ) {
           container = $( element ).closest( "[data-valid-container]" );
           if ( container.length ) {
-            return new CheckboxField( element );
+            return new CheckboxField( container );
           }
         }
       }
@@ -214,6 +214,27 @@
       }
 
       /**
+       * Requires a minimum number of checkboxes to be checked.
+       *
+       * @api {number} data-mincheck The minimum number of checked checkboxes.
+       */
+      , mincheck: function ( field ) {
+        var min = field.getOption( 'mincheck' );
+
+        if ( min !== void 0 ) {
+          return function ( value ) {
+            return {
+              message: "mincheck"
+              , params: {
+                min: min
+              }
+              , valid: value.length >= min
+            };
+          }
+        }
+      }
+
+      /**
        * Requires a minimum length for a value.
        *
        * @api {number} data-minlength The lower bound (inclusive) of the length.
@@ -272,7 +293,7 @@
             return {
               message: "maxlength"
               , params: {
-                min: max
+                max: max
               }
               , valid: value.length <= max
             };
@@ -809,7 +830,7 @@
     value: function () {
       var values = [];
 
-      $( this.siblings + ':checked' ).each( function () {
+      this.$el.find( ':checked' ).each( function () {
         values.push( $( this ).val() );
       } );
 
@@ -845,7 +866,7 @@
     $.each( Valid.fields, function ( name, finder ) {
       field = finder( element );
       if ( field ) {
-        return false;
+        return false; // break
       }
     } );
 
