@@ -35,6 +35,7 @@
       , notblank:    "This value should not be blank."
       , notnull:     "This value should not be null."
       , range:       "This value should be between {min} and {max}."
+      , rangecheck:  "You must select between {min} and {max} choices."
       , rangelength: "This value length is invalid. It should be between {min} and {max} characters long."
       , regexp:      "This value seems to be invalid."
       , required:    "This value is required."
@@ -391,6 +392,32 @@
           return function ( value ) {
             return {
               message: "rangelength"
+              , params: {
+                max: max
+                , min: min
+              }
+              , valid: value.length >= min && value.length <= max
+            };
+          };
+        }
+      }
+
+      /**
+       * Requires a lower and upper bound for the number of checked checkboxes.
+       *
+       * @api {number[]} data-rangecheck e.g. "[10,20]"
+       */
+      , rangecheck: function ( field ) {
+        var bounds = field.getOption( 'rangecheck' ),
+            max,
+            min;
+
+        if ( bounds && bounds.length === 2 ) {
+          min = bounds[0];
+          max = bounds[1];
+          return function ( value ) {
+            return {
+              message: "rangecheck"
               , params: {
                 max: max
                 , min: min

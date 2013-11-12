@@ -536,17 +536,25 @@ var testSuite = function () {
           expect( $( '#checkbox-maxcheck3' ).parent().hasClass( 'parsley-error' ) ).to.be( true );
 //          expect( getErrorMessage( '#checkbox-maxcheck1', 'maxcheck') ).to.be( 'You must select 2 choices or less.' );
         } );
-//        it ( 'rangecheck', function () {
-//          $( '#checkbox-rangecheck1' ).attr( 'checked', 'checked' );
-//          expect( $( '#checkbox-rangecheck1' ).parsley( 'validate' ) ).to.be( false );
-//          $( '#checkbox-rangecheck2' ).attr( 'checked', 'checked' );
-//          expect( $( '#checkbox-rangecheck1' ).parsley( 'validate' ) ).to.be( true );
-//          $( '#checkbox-rangecheck3' ).attr( 'checked', 'checked' );
-//          expect( $( '#checkbox-rangecheck1' ).parsley( 'validate' ) ).to.be( true );
-//          $( '#checkbox-rangecheck4' ).attr( 'checked', 'checked' );
-//          expect( $( '#checkbox-rangecheck1' ).parsley( 'validate' ) ).to.be( false );
+
+        it ( 'rangecheck', function () {
+          var field = $( '#checkbox-rangecheck1' ).parent()[0];
+
+          $( '#checkbox-rangecheck1' ).attr( 'checked', 'checked' );
+          $( '#checkbox-rangecheck1' ).trigger( 'validate' );
+          expect( field.className ).to.be( 'parsley-error' );
+          $( '#checkbox-rangecheck2' ).attr( 'checked', 'checked' );
+          $( '#checkbox-rangecheck2' ).trigger( 'validate' );
+          expect( field.className ).to.be( 'parsley-success' );
+          $( '#checkbox-rangecheck3' ).attr( 'checked', 'checked' );
+          $( '#checkbox-rangecheck3' ).trigger( 'validate' );
+          expect( field.className ).to.be( 'parsley-success' );
+          $( '#checkbox-rangecheck4' ).attr( 'checked', 'checked' );
+          $( '#checkbox-rangecheck4' ).trigger( 'validate' );
+          expect( field.className ).to.be( 'parsley-error' );
 //          expect( getErrorMessage( '#checkbox-rangecheck1', 'rangecheck') ).to.be( 'You must select between 2 and 3 choices.' );
-//        } )
+        } );
+
 //      } )
 //      describe ( 'Test remote validator', function () {
 //        describe ( 'Test parameters and config', function () {
