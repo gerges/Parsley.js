@@ -218,160 +218,193 @@ var testSuite = function () {
                 test validators
     ***************************************/
     describe ( 'Test validators', function () {
-//      it ( 'notblank', function () {
-//        triggerSubmitValidation( '#notblank', '   ' );
-//        expect( $( '#notblank' ).hasClass( 'parsley-error' ) ).to.be( true );
-//        expect( getErrorMessage( '#notblank', 'notblank') ).to.be( 'This value should not be blank.' );
-//        triggerSubmitValidation( '#notnull', 'foo' );
-//        expect( $( '#notnull' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } );
-//
-//      it ( 'required - data-api', function () {
-//        triggerSubmitValidation( '#required', '' );
-//        expect( $( '#required' ).hasClass( 'parsley-error' ) ).to.be( true );
+      it ( 'notblank', function () {
+        triggerSubmitValidation( '#notblank', '' );
+        expect( $( '#notblank' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#notblank', ' ' );
+        expect( $( '#notblank' ).hasClass( 'parsley-error' ) ).to.be( true );
+      } );
+
+      it ( 'notnull', function () {
+        triggerSubmitValidation( '#notnull', '' );
+        expect( $( '#notnull' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#notnull', ' ' );
+        expect( $( '#notnull' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'required - data-api', function () {
+        triggerSubmitValidation( '#required', '' );
+        expect( $( '#required' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#required', '  ' );
+        expect( $( '#required' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#required', '  foo' );
+        expect( $( '#required' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'required - data-api bis', function () {
+        triggerSubmitValidation( '#required-bis', '' );
+        expect( $( '#required-bis' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#required', 'required') ).to.be( 'This value is required.' );
-//        triggerSubmitValidation( '#required', '  ' );
-//        expect( $( '#required' ).hasClass( 'parsley-error' ) ).to.be( true );
-//        triggerSubmitValidation( '#required', '  foo' );
-//        expect( $( '#required' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'required - class-api', function () {
-//        triggerSubmitValidation( '#required-class', '' );
-//        expect( $( '#required-class' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#required-bis', '  ' );
+        expect( $( '#required-bis' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#required-bis', '  foo' );
+        expect( $( '#required-bis' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'required - class-api', function () {
+        triggerSubmitValidation( '#required-class', '' );
+        expect( $( '#required-class' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#required-class', 'required') ).to.be( 'This value is required.' );
-//        triggerSubmitValidation( '#required-class', '  ' );
-//        expect( $( '#required-class' ).hasClass( 'parsley-error' ) ).to.be( true );
-//        triggerSubmitValidation( '#required-class', '  foo' );
-//        expect( $( '#required-class' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'required - html5-api', function () {
-//        triggerSubmitValidation( '#required-html5', '' );
-//        expect( $( '#required-html5' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#required-class', '  ' );
+        expect( $( '#required-class' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#required-class', '  foo' );
+        expect( $( '#required-class' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'required - html5-api', function () {
+        triggerSubmitValidation( '#required-html5', '' );
+        expect( $( '#required-html5' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#required-html5', 'required') ).to.be( 'This value is required.' );
-//        triggerSubmitValidation( '#required-html5', '  ' );
-//        expect( $( '#required-html5' ).hasClass( 'parsley-error' ) ).to.be( true );
-//        triggerSubmitValidation( '#required-html5', '  foo' );
-//        expect( $( '#required-html5' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'required - html5-api bis', function () {
-//        triggerSubmitValidation( '#required-html5-bis', '' );
-//        expect( $( '#required-html5-bis' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#required-html5', '  ' );
+        expect( $( '#required-html5' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#required-html5', '  foo' );
+        expect( $( '#required-html5' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'required - html5-api bis', function () {
+        triggerSubmitValidation( '#required-html5-bis', '' );
+        expect( $( '#required-html5-bis' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#required-html5-bis', 'required') ).to.be( 'This value is required.' );
-//        triggerSubmitValidation( '#required-html5-bis', '  ' );
-//        expect( $( '#required-html5-bis' ).hasClass( 'parsley-error' ) ).to.be( true );
-//        triggerSubmitValidation( '#required-html5-bis', '  foo' );
-//        expect( $( '#required-html5-bis' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
+        triggerSubmitValidation( '#required-html5-bis', '  ' );
+        expect( $( '#required-html5-bis' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#required-html5-bis', '  foo' );
+        expect( $( '#required-html5-bis' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
 //      it ( 'required - select multiple', function () {
 //        expect( $( '#required-selectmultiple' ).parsley( 'validate' ) ).to.be( false );
 //      } )
-//      it ( 'minlength', function () {
-//        triggerSubmitValidation( '#minlength', '12345' );
-//        expect( $( '#minlength' ).hasClass( 'parsley-error' ) ).to.be( true );
+
+      it ( 'minlength', function () {
+        triggerSubmitValidation( '#minlength', '12345' );
+        expect( $( '#minlength' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#minlength', 'minlength') ).to.be( 'This value is too short. It should have 6 characters or more.' );
-//        triggerSubmitValidation( '#minlength', '123456' );
-//        expect( $( '#minlength' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'maxlength', function () {
-//        triggerSubmitValidation( '#maxlength', '12345678' );
-//        expect( $( '#maxlength' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#minlength', '123456' );
+        expect( $( '#minlength' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'maxlength', function () {
+        triggerSubmitValidation( '#maxlength', '12345678' );
+        expect( $( '#maxlength' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#maxlength', 'maxlength') ).to.be( 'This value is too long. It should have 6 characters or less.' );
-//        triggerSubmitValidation( '#maxlength', '12345' );
-//        expect( $( '#maxlength' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'rangelength', function () {
-//        triggerSubmitValidation( '#rangelength', '12345678910' );
-//        expect( $( '#rangelength' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#maxlength', '12345' );
+        expect( $( '#maxlength' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'rangelength', function () {
+        triggerSubmitValidation( '#rangelength', '12345678910' );
+        expect( $( '#rangelength' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#rangelength', 'rangelength') ).to.be( 'This value length is invalid. It should be between 6 and 10 characters long.' );
-//        triggerSubmitValidation( '#rangelength', '1234567' );
-//        expect( $( '#rangelength' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'min', function () {
-//        triggerSubmitValidation( '#min', '8' );
-//        expect( $( '#min' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#rangelength', '1234567' );
+        expect( $( '#rangelength' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'min', function () {
+        triggerSubmitValidation( '#min', '8' );
+        expect( $( '#min' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#min', 'min') ).to.be( 'This value should be greater than or equal to 10.' );
-//        triggerSubmitValidation( '#min', '12' );
-//        expect( $( '#min' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'min html5', function () {
-//        triggerSubmitValidation( '#min-html5', 12 );
-//        expect( $( '#min-html5' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'max html5', function () {
-//        triggerSubmitValidation( '#max-html5', 8 );
-//        expect( $( '#max-html5' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'max', function () {
-//        triggerSubmitValidation( '#max', '12' );
-//        expect( $( '#max' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#min', '12' );
+        expect( $( '#min' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'min html5', function () {
+        triggerSubmitValidation( '#min-html5', 12 );
+        expect( $( '#min-html5' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'max html5', function () {
+        triggerSubmitValidation( '#max-html5', 8 );
+        expect( $( '#max-html5' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'max', function () {
+        triggerSubmitValidation( '#max', '12' );
+        expect( $( '#max' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#max', 'max') ).to.be( 'This value should be lower than or equal to 10.' );
-//        triggerSubmitValidation( '#max', '10' );
-//        expect( $( '#max' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'range', function () {
-//        triggerSubmitValidation( '#range', '12' );
-//        expect( $( '#range' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#max', '10' );
+        expect( $( '#max' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'range', function () {
+        triggerSubmitValidation( '#range', '12' );
+        expect( $( '#range' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#range', 'range') ).to.be( 'This value should be between 6 and 10.' );
-//        triggerSubmitValidation( '#range', '2' );
-//        expect( $( '#range' ).hasClass( 'parsley-error' ) ).to.be( true );
-//        triggerSubmitValidation( '#range', '8' );
-//        expect( $( '#range' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'regexp', function () {
-//        triggerSubmitValidation( '#regexp', 'foo' );
-//        expect( $( '#regexp' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#range', '2' );
+        expect( $( '#range' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#range', '8' );
+        expect( $( '#range' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'regexp', function () {
+        triggerSubmitValidation( '#regexp', 'foo' );
+        expect( $( '#regexp' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#regexp', 'regexp') ).to.be( 'This value seems to be invalid.' );
-//        triggerSubmitValidation( '#regexp', '42' );
-//        expect( $( '#regexp' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'regexp with custom flag', function () {
-//        triggerSubmitValidation( '#regexp-flag1', 'foo' );
-//        expect( $( '#regexp-flag1' ).hasClass( 'parsley-error' ) ).to.be( true );
-//        triggerSubmitValidation( '#regexp-flag1', 'Foo' );
-//        expect( $( '#regexp-flag1' ).hasClass( 'parsley-success' ) ).to.be( true );
-//
-//        // passing 'i' flag, case unsensitive make allways regexp pass
-//        triggerSubmitValidation( '#regexp-flag2', 'foo' );
-//        expect( $( '#regexp-flag2' ).hasClass( 'parsley-success' ) ).to.be( true );
-//        triggerSubmitValidation( '#regexp-flag2', 'Foo' );
-//        expect( $( '#regexp-flag2' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'pattern html5-regexp', function () {
-//        triggerSubmitValidation( '#regexp-html5', 'foo' );
-//        expect( $( '#regexp-html5' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#regexp', '42' );
+        expect( $( '#regexp' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'regexp with custom flag', function () {
+        triggerSubmitValidation( '#regexp-flag1', 'foo' );
+        expect( $( '#regexp-flag1' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#regexp-flag1', 'Foo' );
+        expect( $( '#regexp-flag1' ).hasClass( 'parsley-success' ) ).to.be( true );
+
+        // passing 'i' flag, case unsensitive make allways regexp pass
+        triggerSubmitValidation( '#regexp-flag2', 'foo' );
+        expect( $( '#regexp-flag2' ).hasClass( 'parsley-success' ) ).to.be( true );
+        triggerSubmitValidation( '#regexp-flag2', 'Foo' );
+        expect( $( '#regexp-flag2' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'pattern html5-regexp', function () {
+        triggerSubmitValidation( '#regexp-html5', 'foo' );
+        expect( $( '#regexp-html5' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#regexp-html5', 'regexp') ).to.be( 'This value seems to be invalid.' );
-//        triggerSubmitValidation( '#regexp-html5', '42');
-//        expect( $( '#regexp-html5' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//
-//      var urls = [
-//          { url: "http://foo.com/bar_(baz)#bam-1", expected: true, strict: true }
-//        , { url: "http://www.foobar.com/baz/?p=364", expected: true, strict: true }
-//        , { url: "mailto:name@example.com", expected: true, strict: false }
-//        , { url: "foo.bar", expected: true, strict: false }
-//        , { url: "www.foobar.baz", expected: true, strict: false }
-//        , { url: "https://foobar.baz", expected: true, strict: true }
-//        , { url: "git://foobar.baz", expected: true, strict: true }
-//        , { url: "foo", expected: false, strict: false }
-//        , { url: "foo:bar", expected: false, strict: false }
-//        , { url: "foo://bar", expected: false, strict: false }
-//
-//        // absolutely finish by false to test error message
-//        , { url: "ého", expected: false, strict: false }
-//      ];
-//
-//      it ( 'url', function () {
-//        for ( var i in urls ) {
-//          $( '#typeurl' ).val( urls[i].url );
-//          expect( $( '#typeurl' ).parsley( 'validate' ) ).to.be( urls[ i ].expected );
-//        }
+        triggerSubmitValidation( '#regexp-html5', '42');
+        expect( $( '#regexp-html5' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      var urls = [
+          { url: "http://foo.com/bar_(baz)#bam-1", expected: true, strict: true }
+        , { url: "http://www.foobar.com/baz/?p=364", expected: true, strict: true }
+        , { url: "mailto:name@example.com", expected: true, strict: false }
+        , { url: "foo.bar", expected: true, strict: false }
+        , { url: "www.foobar.baz", expected: true, strict: false }
+        , { url: "https://foobar.baz", expected: true, strict: true }
+        , { url: "git://foobar.baz", expected: true, strict: true }
+        , { url: "foo", expected: false, strict: false }
+        , { url: "foo:bar", expected: false, strict: false }
+        , { url: "foo://bar", expected: false, strict: false }
+
+        // absolutely finish by false to test error message
+        , { url: "ého", expected: false, strict: false }
+      ];
+
+      it ( 'url', function () {
+        for ( var i in urls ) {
+          triggerSubmitValidation( '#typeurl', urls[i].url );
+          expect( $( '#typeurl' ).hasClass( 'parsley-error' ) ).to.be( !urls[i].expected );
+          expect( $( '#typeurl' ).hasClass( 'parsley-success' ) ).to.be( urls[i].expected );
+        }
 //        triggerSubmitValidation( '#typeurl', 'foo' );
 //        expect( getErrorMessage( '#typeurl', 'type') ).to.be( 'This value should be a valid url.' );
-//      } )
-//      it ( 'url html5', function () {
-//        $( '#typeurl-html5' ).val( "http://foo.bar" );
-//        expect( $( '#typeurl-html5' ).parsley( 'validate' ) ).to.be( true );
-//      } )
+      } );
+
+      it ( 'url html5', function () {
+        triggerSubmitValidation( '#typeurl-html5', "http://foo.bar" );
+        expect( $( '#typeurl-html5' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
 //      it ( 'url strict + global config overriding type message', function () {
 //        for ( var i in urls ) {
 //          $( '#typeurlstrict' ).val( urls[i].url );
@@ -380,72 +413,81 @@ var testSuite = function () {
 //        triggerSubmitValidation( '#typeurlstrict', 'foo' );
 //        expect( getErrorMessage( '#typeurlstrict', 'type') ).to.be( 'urlstrict global override.' );
 //      } )
-//      it ( 'email', function () {
-//        triggerSubmitValidation( '#typeemail', 'foo' );
-//        expect( $( '#typeemail' ).hasClass( 'parsley-error' ) ).to.be( true );
+
+      it ( 'email', function () {
+        triggerSubmitValidation( '#typeemail', 'foo' );
+        expect( $( '#typeemail' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#typeemail', 'type') ).to.be( 'This value should be a valid email.' );
-//        triggerSubmitValidation( '#typeemail', 'foo@bar' );
-//        expect( $( '#typeemail' ).hasClass( 'parsley-error' ) ).to.be( true );
-//        triggerSubmitValidation( '#typeemail', 'foo@bar.com' );
-//        expect( $( '#typeemail' ).hasClass( 'parsley-success' ) ).to.be( true );
-//        triggerSubmitValidation( '#typeemail', 'foo+baz@bar.com' );
-//        expect( $( '#typeemail' ).hasClass( 'parsley-success' ) ).to.be( true );
-//        triggerSubmitValidation( '#typeemail', 'foo.bar@gmail.com' );
-//        expect( $( '#typeemail' ).hasClass( 'parsley-success' ) ).to.be( true );
-//        triggerSubmitValidation( '#typeemail', 'foo.bar@bar.com.ext' );
-//        expect( $( '#typeemail' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'email html5', function () {
-//        triggerSubmitValidation( '#typeemail-html5', 'foo@bar.com' );
-//        expect( $( '#typeemail-html5' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'range html5', function () {
-//        triggerSubmitValidation( '#typerange-html5', 8 );
-//        expect( $( '#typerange-html5' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'digits', function () {
-//        triggerSubmitValidation( '#typedigits', 'foo' );
-//        expect( $( '#typedigits' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#typeemail', 'foo@bar' );
+        expect( $( '#typeemail' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#typeemail', 'foo@bar.com' );
+        expect( $( '#typeemail' ).hasClass( 'parsley-success' ) ).to.be( true );
+        triggerSubmitValidation( '#typeemail', 'foo+baz@bar.com' );
+        expect( $( '#typeemail' ).hasClass( 'parsley-success' ) ).to.be( true );
+        triggerSubmitValidation( '#typeemail', 'foo.bar@gmail.com' );
+        expect( $( '#typeemail' ).hasClass( 'parsley-success' ) ).to.be( true );
+        triggerSubmitValidation( '#typeemail', 'foo.bar@bar.com.ext' );
+        expect( $( '#typeemail' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'email html5', function () {
+        triggerSubmitValidation( '#typeemail-html5', 'foo@bar.com' );
+        expect( $( '#typeemail-html5' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'range html5', function () {
+        triggerSubmitValidation( '#typerange-html5', 8 );
+        expect( $( '#typerange-html5' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'digits', function () {
+        triggerSubmitValidation( '#typedigits', 'foo' );
+        expect( $( '#typedigits' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#typedigits', 'type') ).to.be( 'This value should be digits.' );
-//        triggerSubmitValidation( '#typedigits', '42.2' );
-//        expect( $( '#typedigits' ).hasClass( 'parsley-error' ) ).to.be( true );
-//        triggerSubmitValidation( '#typedigits', '42' );
-//        expect( $( '#typedigits' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'dateIso', function () {
-//        triggerSubmitValidation( '#typedateIso', 'foo' );
-//        expect( $( '#typedateIso' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#typedigits', '42.2' );
+        expect( $( '#typedigits' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#typedigits', '42' );
+        expect( $( '#typedigits' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'dateIso', function () {
+        triggerSubmitValidation( '#typedateIso', 'foo' );
+        expect( $( '#typedateIso' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#typedateIso', 'type') ).to.be( 'This value should be a valid date (YYYY-MM-DD).' );
-//        triggerSubmitValidation( '#typedateIso', '2012-12-12' );
-//        expect( $( '#typedateIso' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'phone', function () {
-//        triggerSubmitValidation( '#typephone', 'foo' );
-//        expect( $( '#typephone' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#typedateIso', '2012-12-12' );
+        expect( $( '#typedateIso' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'phone', function () {
+        triggerSubmitValidation( '#typephone', 'foo' );
+        expect( $( '#typephone' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#typephone', 'type') ).to.be( 'This value should be a valid phone number.' );
-//        triggerSubmitValidation( '#typephone', '(917) 5878 5457' );
-//        expect( $( '#typephone' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'number', function () {
-//        triggerSubmitValidation( '#typenumber', 'foo' );
-//        expect( $( '#typenumber' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#typephone', '(917) 5878 5457' );
+        expect( $( '#typephone' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'number', function () {
+        triggerSubmitValidation( '#typenumber', 'foo' );
+        expect( $( '#typenumber' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#typenumber', 'type') ).to.be( 'This value should be a valid number.' );
-//        triggerSubmitValidation( '#typenumber', '007' );
-//        expect( $( '#typenumber' ).hasClass( 'parsley-success' ) ).to.be( true );
-//        triggerSubmitValidation( '#typenumber', '42.5' );
-//        expect( $( '#typenumber' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
-//      it ( 'aphanum', function () {
-//        triggerSubmitValidation( '#typealphanum', '@&' );
-//        expect( $( '#typealphanum' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#typenumber', '007' );
+        expect( $( '#typenumber' ).hasClass( 'parsley-success' ) ).to.be( true );
+        triggerSubmitValidation( '#typenumber', '42.5' );
+        expect( $( '#typenumber' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
+      it ( 'aphanum', function () {
+        triggerSubmitValidation( '#typealphanum', '@&' );
+        expect( $( '#typealphanum' ).hasClass( 'parsley-error' ) ).to.be( true );
 //        expect( getErrorMessage( '#typealphanum', 'type') ).to.be( 'This value should be alphanumeric.' );
-//        triggerSubmitValidation( '#typealphanum', 'parsley.js' );
-//        expect( $( '#typealphanum' ).hasClass( 'parsley-error' ) ).to.be( true );
-//        triggerSubmitValidation( '#typealphanum', 'parsley12' );
-//        expect( $( '#typealphanum' ).hasClass( 'parsley-success' ) ).to.be( true );
-//        triggerSubmitValidation( '#typealphanum', 'foo' );
-//        expect( $( '#typealphanum' ).hasClass( 'parsley-success' ) ).to.be( true );
-//      } )
+        triggerSubmitValidation( '#typealphanum', 'parsley.js' );
+        expect( $( '#typealphanum' ).hasClass( 'parsley-error' ) ).to.be( true );
+        triggerSubmitValidation( '#typealphanum', 'parsley12' );
+        expect( $( '#typealphanum' ).hasClass( 'parsley-success' ) ).to.be( true );
+        triggerSubmitValidation( '#typealphanum', 'foo' );
+        expect( $( '#typealphanum' ).hasClass( 'parsley-success' ) ).to.be( true );
+      } );
+
 //      it ( 'equalTo', function () {
 //        triggerSubmitValidation( '#equalTo', 'foo' );
 //        expect( $( '#equalTo' ).hasClass( 'parsley-error' ) ).to.be( true );
