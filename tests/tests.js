@@ -524,15 +524,18 @@ var testSuite = function () {
 //          $( '#checkbox-mincheckgroup2' ).attr( 'checked', 'checked' );
 //          expect( $( '#checkbox-mincheckgroup1' ).parsley( 'validate' ) ).to.be( true );
 //        } )
-//        it ( 'maxcheck', function () {
-//          $( '#checkbox-maxcheck1' ).attr( 'checked', 'checked' );
-//          expect( $( '#checkbox-maxcheck1' ).parsley( 'validate' ) ).to.be( true );
-//          $( '#checkbox-maxcheck2' ).attr( 'checked', 'checked' );
-//          expect( $( '#checkbox-maxcheck1' ).parsley( 'validate' ) ).to.be( true );
-//          $( '#checkbox-maxcheck3' ).attr( 'checked', 'checked' );
-//          expect( $( '#checkbox-maxcheck1' ).parsley( 'validate' ) ).to.be( false );
+        it ( 'maxcheck', function () {
+          $( '#checkbox-maxcheck1' ).attr( 'checked', 'checked' );
+          $( '#checkbox-maxcheck1' ).trigger( 'validate' );
+          expect( $( '#checkbox-maxcheck1' ).parent().hasClass( 'parsley-success' ) ).to.be( true );
+          $( '#checkbox-maxcheck2' ).attr( 'checked', 'checked' );
+          $( '#checkbox-maxcheck2' ).trigger( 'validate' );
+          expect( $( '#checkbox-maxcheck2' ).parent().hasClass( 'parsley-success' ) ).to.be( true );
+          $( '#checkbox-maxcheck3' ).attr( 'checked', 'checked' );
+          $( '#checkbox-maxcheck3' ).trigger( 'validate' );
+          expect( $( '#checkbox-maxcheck3' ).parent().hasClass( 'parsley-error' ) ).to.be( true );
 //          expect( getErrorMessage( '#checkbox-maxcheck1', 'maxcheck') ).to.be( 'You must select 2 choices or less.' );
-//        } )
+        } );
 //        it ( 'rangecheck', function () {
 //          $( '#checkbox-rangecheck1' ).attr( 'checked', 'checked' );
 //          expect( $( '#checkbox-rangecheck1' ).parsley( 'validate' ) ).to.be( false );

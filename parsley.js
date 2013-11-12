@@ -281,6 +281,27 @@
       }
 
       /**
+       * Requires a maximum number of checkboxes to be checked.
+       *
+       * @api {number} data-maxcheck The maximum number of checked checkboxes.
+       */
+      , maxcheck: function ( field ) {
+        var max = field.getOption( 'maxcheck' );
+
+        if ( max !== void 0 ) {
+          return function ( value ) {
+            return {
+              message: "maxcheck"
+              , params: {
+                max: max
+              }
+              , valid: value.length <= max
+            };
+          }
+        }
+      }
+
+      /**
        * Requires a maximum length for a value.
        *
        * @api {number} data-maxlength The upper bound (inclusive) of the length.
