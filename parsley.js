@@ -45,7 +45,7 @@
      *
      * Given an element, the finder can return either the container element for the field, or undefined.
      */
-    , fields: {
+    , identifiers: {
       /**
        * A field finder for HTML's builtin single-element form inputs.
        *
@@ -863,8 +863,8 @@
   function findField ( element ) {
     var field;
 
-    $.each( Valid.fields, function ( name, finder ) {
-      field = finder( element );
+    $.each( Valid.identifiers, function ( name, identifier ) {
+      field = identifier( element );
       if ( field ) {
         return false; // break
       }
