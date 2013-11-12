@@ -47,14 +47,41 @@
      */
     , fields: {
       /**
-       * A field finder for HTML's builtin form inputs.
+       * A field finder for HTML's builtin single-element form inputs.
        *
        * @param element An element to search up from.
-       * @returns {(DOMElement|undefined)}
+       * @returns {(Field|undefined)}
        */
-      html: function ( element ) {
-        if ( $( element ).is( "input, select, textarea" ) ) {
-          return element;
+      'html-single': function ( element ) {
+        var $el = $( element );
+
+        if ( $el.is( "input, select, textarea" )
+            && $el.not( "[type=checkbox], [type=radio]" ).length ) {
+          return new Field( element );
+        }
+      }
+
+      , 'html-radio': function ( element ) {
+        var $el = $( element),
+            container;
+
+        if ( $el.is( "input[type=radio]" ) ) {
+          container = $( element ).closest( "[data-valid-container]" );
+          if ( container.length ) {
+            return new RadioField( element );
+          }
+        }
+      }
+
+      , 'html-checkbox': function ( element ) {
+        var $el = $( element),
+            container;
+
+        if ( $el.is( "input[type=checkbox]" ) ) {
+          container = $( element ).closest( "[data-valid-container]" );
+          if ( container.length ) {
+            return new CheckboxField( element );
+          }
         }
       }
     }
@@ -548,15 +575,16 @@
     }
 
     , value: function () {
-      var value = this.getOption( "value" );
-
-      if ( value !== undefined ) {
-        value = eval("window." + value);
-      } else {
-        value = this.$el.val();
-      }
-
-      return value;
+      return this.$el.val();
+//      var value = this.getOption( "value" );
+//
+//      if ( value !== undefined ) {
+//        value = eval("window." + value);
+//      } else {
+//        value = this.$el.val();
+//      }
+//
+//      return value;
     }
 
     /**
@@ -763,6 +791,32 @@
     }
   };
 
+  function RadioField () {
+    Field.apply(this, arguments);
+  }
+
+  RadioField.prototype = $.extend( {}, Field.prototype, {
+    value: function () {
+      return this.$el.find( ":checked" ).val();
+    }
+  } );
+
+  function CheckboxField () {
+    Field.apply(this, arguments);
+  }
+
+  CheckboxField.prototype = $.extend( {}, Field.prototype, {
+    value: function () {
+      var values = [];
+
+      $( this.siblings + ':checked' ).each( function () {
+        values.push( $( this ).val() );
+      } );
+
+      return values;
+    }
+  } );
+
   /**
    * Format a string, with named parameters:
    *
@@ -791,7 +845,6 @@
     $.each( Valid.fields, function ( name, finder ) {
       field = finder( element );
       if ( field ) {
-        field = new Field( field );
         return false;
       }
     } );
